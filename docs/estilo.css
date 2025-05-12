@@ -1,34 +1,55 @@
-/* Justifica todo el texto */
-body {
-  text-align: justify;
+/* Barra de encabezado principal */
+.header-bar {
+    width: 100%;
+    background-color: #4B0082; /* Indigo - morado elegante */
+    padding: 20px 0;
+    text-align: center;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
 }
 
-/* Estilo para el título principal (h1) */
-h1.title {
-  color: white;
-  background-color: #D8BFD8; /* morado claro */
-  padding: 20px;
-  text-align: center;
-  border-radius: 0 0 10px 10px;
+/* Cambiar color de títulos */
+h1, h2, h3 {
+    color: #4B0082;
 }
 
-/* Estilo para el índice flotante (TOC) */
-div#TOC {
-  position: fixed;
-  top: 100px;
-  left: 10px;
-  width: 250px;
-  max-height: 90%;
-  overflow: auto;
-  background-color: #E6CCF2; /* otro tono de morado claro */
-  padding: 10px;
-  border: 1px solid #ccc;
-  font-size: 0.9em;
-  border-radius: 5px;
-  z-index: 9999;
+/* Menú lateral */
+div.tocify {
+    background-color: #8A2BE2 !important; /* BlueViolet */
+    border-radius: 10px;
+    padding: 10px;
 }
 
-/* Opcional: estilizar los títulos de secciones */
-h2, h3 {
-  color: #4B0082; /* índigo oscuro */
+div.tocify .tocify-focus {
+    background-color: #4B0082 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Enlaces */
+a {
+    color: #4B0082;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #8A2BE2;
+    text-decoration: underline;
+}
+
+/* Botón elegante */
+a.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4B0082;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+a.button:hover {
+    background-color: #8A2BE2;
 }
