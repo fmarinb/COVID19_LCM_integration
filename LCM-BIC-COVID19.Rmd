@@ -1,0 +1,395 @@
+---
+title: "LCM-BIC sclustering in COVID-19 patients
+
+Interactive Results and Databases."
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    css: estilo.css
+---
+
+Fernando Marín-Benesiu, Lucia Chica-Redecillas, Sergio Cuenca-López, Carmen Entrala-Bernal, Sara Martín-Esteban, Maria Jesús Alvarez-Cubero, Luis Javier Martínez-González.
+
+**Group:** Search for molecular biomarkers associated with genetically based diseases. Universidad de Granada, España.
+
+Additional resources for our study in the Computational and Structural Biotechnology Journal: Integration of T cell repertoire, CyTOF, genotyping and symptomatology data reveals subphenotypic variability in patients with SARS-CoV-2 infection.
+
+# OUR STUDY
+
+Additional interactive resources from the study results are available on this website: Integration of T Cell Repertoire, CyTOF, genotyping and symptomatology data reveals subphenotypic variability in COVID-19 Patients. The website is divided into a first section describing the results with graphs and interactive tables, followed by a second section consisting of the creation of a searchable database.
+
+The **new database** stores the TCRs with the highest predictive capacity in the comparisons obtained in our study, together with information of interest such as the V and J allele encoded as well as the epitope, antigen and corresponding pathogen to which they are related.
+
+## Abstract
+
+COVID-19 manifests a broad spectrum of clinical outcomes , from asymptomatic cases to severe disease. While several biomarkers have been proposed, comprehensive immunological analyses integrating mass cytometry (CyTOF) and T-cell receptor sequencing (TCRseq) data remain limited. In this study, we applied the Latent Class Model based on the Bayesian Information Criterion (LCM-BIC) algorithm  to integrate immunophenotyping, including monocyte-macrophage counts from CyTOF, T-cell receptor repertorie data via TCRseq, SNPs data from *ACE2* (rs2285666), *MX1* (rs469390), and *TMPRSS2* (rs2070788), and symptomatology data from 61 Spanish COVID-19 patients (33 mild, 28 severe). We identified three novel and distinct patient clusters  with significant differences in TCR diversity, monocyte subpopulations, and V allele usage and disease outcome. Cluster 1 was predominantly enriched in severe cases, characterized by unique immunological features. Deep learning analysis of TCR amino acid sequences further distinguished Cluster 1 from the others, identifying SARS-CoV-2-specific TCR sequences associated with disease severity. In addition, analysis of residue sensitivity of cluster 1 SARS-CoV-2-specific TCR sequences further identified conserved aminoacids located in key central positions of the complementarity-determining region 3. This study highlights the value of integrating immunophenotyping and genetic profiling to identify novel immunological markers and patterns, aiding in the stratification and management of COVID-19 patients based on their immune profiles and genetic background.
+
+![](MANUSCRIPT_INTEGRATION_CBM/figures/GA.jpeg)
+
+## Main objective
+
+The main objective of this study was to apply the integration of immunophenotyping data for the identification of subphenotypes in COVID-19 patients to achieve a more accurate stratification.
+
+## Specific objectives
+
+-   Integrate bulk-TCRβ seq, CyTOF, genotyping and symptomatology data into the latent class model (LCM) as an unsupervised machine learning technique to detect patient subgroups.
+-   Study the distribution of observations and groups created by LCM using univariate and multivariate analysis.
+-   Detect clonotypes and critical residues in the CDR3b sequence among the groups created by LCM, based on deep learning inference.
+-   Filter and study critical residues, affinity for antigens and detection of structural motifs of the most predictive clonotypes, using tools based on sequence alignment.
+
+## Data avaliability
+
+Source code of the R and Python Jupyter scrips can be found in <https://github.com/fmarinb/COVID19_LCM_integration> and in Figshare with doi: 10.6084/m9.figshare.26994868.
+
+Datasets can be found at the European Genome Phenome Archive (EGA) with datasets IDs EGAD50000000840 (<https://ega443> archive.org/datasets/EGAD50000000840) and EGAD50000000477 (<https://ega444> archive.org/datasets/EGAD50000000477)
+
+## References and contact:
+
+Marín-Benesiu, F., Chica-Redecillas, L., Arenas-Rodríguez, V. *et al.* The T-cell repertoire of Spanish patients with COVID-19 as a strategy to link T-cell characteristics to the severity of the disease. *Hum Genomics* **18**, 94 (2024). https://doi.org/10.1186/s40246-024-00654-0
+
+fernando.marin\@genyo.es
+
+# MAIN RESULTS
+
+## Exploratory Analysis and Latent Class Model (LCM) Clustering
+
+A Factor Analysis of Mixed Data (FAMD) was conducted before and after clustering with a Latent Class Model (LCM). Before clustering, TCR diversity, clonality, and monocyte markers showed moderate influence, but no significant separation was found between mild and severe cases. After LCM clustering, patients were grouped into **three distinct clusters**, with stronger contributions from V alleles and monocyte profiles. While severity alone was not statistically significant, **clear differences emerged between clusters** (p = 0.001).
+
+```{r, echo=FALSE, include=FALSE}
+library(FactoMineR)
+library(factoextra)
+library(tidyverse)
+library(plotly)
+library(patchwork)
+
+```
+
+```{r, echo=FALSE, include=FALSE}
+load("int_scripts/famd_objetos_lcm.RData")
+```
+
+```{r, echo=FALSE, include=FALSE}
+
+ p<-fviz_mfa_ind(res.famd_new,repel=T, addEllipses = T,
+              ellipse.type = "convex",
+               geom = 'point', 
+               pointsize = 5, 
+               alpha.ind = 0.4, 
+               habillage =as.factor(selected_df3$cluster), 
+               show.clust.cent = FALSE,
+               palette = c("#4B0055", "#009F94", "#FDE333"))
+  
+  p + geom_point(data = p$data, aes(x = x, y = y), 
+                 color = "black", 
+                 size=5, alpha=0.2)+
+                 theme(axis.title = element_text(size = 20),  
+                       axis.text = element_text(size = 16),
+                       title = element_blank(),
+                       legend.text = element_text(size=14))
+                 labs(colour = "Clusters")
+  
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ggplotly(p)
+```
+
+**Figure 1.** Post-LCM dataset dimensionality is reduced using a FAMD plot and labelled according to the cluster generated by
+the LCM-BIC model. Groups represent patient clusters obtained by LCM-BIC.
+
+## Variable Distribution Across Clusters
+
+Of the 70 variables selected by the LCM-BIC model, **GLIPH2 motifs and V alleles gained importance**, while most symptoms and genotypes were excluded—pneumonia was the only qualitative variable retained. Cluster analysis revealed a significant association with severity (p = 0.009): **Cluster 1 concentrated most severe cases**, Cluster 2 the mild ones, and Cluster 3 showed a balanced profile. Cluster 1 stood out for **lower TCR diversity and higher oligoclonality**, and significant shifts were observed in 15 V alleles and several GLIPH2 motifs. CyTOF variables showed more modest changes, with **Classical Monocytes CD36+** being the only one among the top 25.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggradar)
+load("int_scripts/replace_undescore.RData")
+load("int_scripts/final_df_lcm.Rdata")
+load("int_scripts/replace_functions.RData")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+div_70_lcm<-final_df_lcm[, c(2:9, 72)]%>%
+  rename(., cluster=cluster.x)%>%
+  mutate(cluster = as.factor(cluster)) %>%
+  relocate(., cluster, .before = 1)%>%
+  mutate_if(., .predicate = is.numeric, scale)%>%
+  group_by(., cluster)%>%
+  summarize_all(., mean)%>%rename_all(replace_underscore)
+  
+
+
+
+v_70_lcm<-final_df_lcm[, c(10:37, 72)]%>%
+rename(., cluster=cluster.x)%>%
+  mutate(cluster = as.factor(cluster)) %>%
+  relocate(., cluster, .before = 1)%>%
+  mutate_if(., .predicate = is.numeric, scale)%>%
+  group_by(., cluster)%>%
+  summarize_all(., mean)%>% rename_all(replace_underscore)
+
+
+j_70_lcm<-final_df_lcm[, c(38:43, 72)]%>%
+rename(., cluster=cluster.x)%>%
+  mutate(cluster = as.factor(cluster)) %>%
+  relocate(., cluster, .before = 1)%>%
+  mutate_if(., .predicate = is.numeric, scale)%>%
+  group_by(., cluster)%>%
+  summarize_all(., mean)%>% rename_all(replace_underscore)
+
+
+
+motif_70_lcm<-final_df_lcm[, c(44:59, 72)]%>%
+rename(., cluster=cluster.x)%>%
+  mutate(cluster = as.factor(cluster)) %>%
+  relocate(., cluster, .before = 1)%>%
+  mutate_if(., .predicate = is.numeric, scale)%>%
+  group_by(., cluster)%>%
+  summarize_all(., mean)%>%
+  rename_all(replace_underscore)%>%
+  rename_all(~ str_replace(., "\\.", "%"))
+  
+
+
+
+cytof_70_lcm<-final_df_lcm[, c(60:70, 72)]%>%
+  rename(., cluster=cluster.x)%>%
+  mutate(cluster = as.factor(cluster)) %>%
+  relocate(., cluster, .before = 1)%>%
+  mutate_if(., .predicate = is.numeric, scale)%>%
+  group_by(., cluster)%>%
+  summarize_all(., mean)%>%rename_all(replace_yn)  
+
+
+
+radar_divclon<-ggradar(
+  div_70_lcm, 
+  grid.min = min(as.matrix(div_70_lcm[, -1])), grid.mid = 0, grid.max = max(as.matrix(div_70_lcm[, -1])),
+  # Polygons
+  values.radar = c( grid.min=round(min(as.matrix(div_70_lcm[, -1])),2), grid.mid = 0, grid.max=round(max(as.matrix(div_70_lcm[, -1])),2)),
+  group.line.width = 0.5, 
+  group.point.size = 1.5,
+  group.colours = c("#4B0055", "#009F94", "#FDE333"),
+  # Background and grid lines
+  gridline.mid.colour = "grey",
+  legend.position = "none", axis.label.size = 3
+)
+
+
+
+
+radar_v<-ggradar(
+  v_70_lcm, 
+  grid.min = min(as.matrix(div_70_lcm[, -1])), grid.mid = 0, grid.max = max(as.matrix(v_70_lcm[, -1])),
+  # Polygons
+  values.radar = c( grid.min=round(min(as.matrix(v_70_lcm[, -1])),2), grid.mid = 0, grid.max=round(max(as.matrix(v_70_lcm[, -1])),2)),
+  group.line.width = 0.5, 
+  group.point.size = 1.5,
+  group.colours = c("#4B0055", "#009F94", "#FDE333"),
+  # Background and grid lines
+  gridline.mid.colour = "grey",
+  legend.position = "none",
+  axis.label.size = 2.5, plot.legend = FALSE
+)
+
+
+
+radar_j<-ggradar(
+  j_70_lcm, 
+  grid.min = min(as.matrix(j_70_lcm[, -1])), grid.mid = 0, grid.max = max(as.matrix(j_70_lcm[, -1])),
+  # Polygons
+  values.radar = c( grid.min=round(min(as.matrix(j_70_lcm[, -1])),2), grid.mid = 0, grid.max=round(max(as.matrix(j_70_lcm[, -1])),2)),
+  group.line.width = 0.5, 
+  group.point.size = 1.5,
+  group.colours = c("#4B0055", "#009F94", "#FDE333"),
+  # Background and grid lines
+  gridline.mid.colour = "grey",
+  legend.position = "none", plot.legend = FALSE, axis.label.size = 2.5
+)
+
+
+radar_motif<-ggradar(
+  motif_70_lcm, 
+  grid.min = min(as.matrix(motif_70_lcm[, -1])), grid.mid = 0, grid.max = max(as.matrix(motif_70_lcm[, -1])),
+  # Polygons
+  values.radar = c( grid.min=round(min(as.matrix(motif_70_lcm[, -1])),2), grid.mid = 0, grid.max=round(max(as.matrix(motif_70_lcm[, -1])),2)),
+  group.line.width = 0.5, 
+  group.point.size = 1.5,
+  group.colours = c("#4B0055", "#009F94", "#FDE333"),
+  # Background and grid lines
+  gridline.mid.colour = "grey",
+  legend.position = "none",
+  plot.legend = FALSE,
+  axis.label.size = 2.5
+)
+
+
+
+
+radar_cytof<-ggradar(
+  cytof_70_lcm, 
+  grid.min = min(as.matrix( cytof_70_lcm[, -1])), grid.mid = 0, grid.max = max(as.matrix( cytof_70_lcm[, -1])),
+  values.radar = c( grid.min=round(min(as.matrix( cytof_70_lcm[, -1])),2), grid.mid = 0, grid.max=round(max(as.matrix( cytof_70_lcm[, -1])),2)),
+  group.line.width = 0.5, 
+  group.point.size = 1.5,
+  group.colours = c("#4B0055", "#009F94", "#FDE333"),
+  gridline.mid.colour = "grey",
+  legend.position = "none",
+  plot.legend = FALSE,
+  axis.label.size = 2.5
+)
+
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=8}
+r1<-ggplotly(radar_divclon, width = 400, height = 400)
+r1
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=4}
+
+r2<-ggplotly(radar_v, width = 400, height = 400)
+r2
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=4}
+r3<-ggplotly(radar_j, width = 400, height = 400)
+r3
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=8}
+r4<-ggplotly(radar_motif, width = 400, height = 400)
+r4
+```
+
+```{r,  echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=8}
+r5<-ggplotly(radar_cytof, width = 400, height = 400)
+r5
+```
+
+**Figure 2:** Radar plots of the top 25 most important variables in the post LCM dataset according to the BIC criterion. Each radar contains the variables classified by the corresponding subtype (From top to bottom: diversity and clonality TCR reperetoire variables, V allele frequencies, J allele frequencies, GLIPH2 TCR clusters frequencies and CyTOF monocyte-macrophage percentage counts). For a equal representation). Diversity and clonality variables were standarized by z-score.
+
+## CDR3b Sequence Signatures Across Clusters
+
+Deep learning analysis of the 1000 most abundant CDR3b clonotypes revealed distinct TCR signatures between clusters. **Unsupervised learning (VAE)** captured most of the variance and clearly separated **Cluster 1** from Clusters 2 and 3 (AUC \> 0.95). **Supervised models** successfully distinguished Cluster 1 from the others but failed to separate Clusters 2 and 3 or mild vs. severe cases directly—**highlighting the added value of LCM clustering**.
+
+Further analysis identified **amino acid patterns** in Cluster 1, with central positions 5–7 enriched in glutamic acid (E), aspartic acid (D), and proline (P), supporting the presence of **distinct CDR3b signatures** with potential relevance in disease progression.
+
+![](images/image1.jpg){width="6000"}
+
+**Figure 3**. AUC-ROC curves of the cluster 1 vs cluster 2 (left), cluster 1 vs cluster 3 (center), and cluster 2 vs cluster 3 (right) are presented. The analyses were validated using 100 Monte Carlo simulations and a 75% training and 25% test split using DeepTCR' s supervised analysis utilities.
+
+## SARS-CoV-2-Reactive CDR3b Sequences
+
+Among the most predictive CDR3b sequences identified between clusters, **up to \~29% showed reactivity to SARS-CoV-2**, with little or no overlap between Cluster 1 and the others. A group of **59 reactive sequences** specific to Cluster 1 exhibited conserved central-distal residues, particularly at **position 6**, and were divided into two subgroups based on sequence similarity. These findings suggest that **Cluster 1 harbors unique SARS-CoV-2-specific TCR signatures**, reinforcing its immunological distinctiveness.
+
+![](images/dedrogram.JPG-01.jpg){width="600"}
+
+**Figure 4.** A multiple sequence aligment-generated dendrogram of the 59 common SARS-CoV-2-reactive CDR3b sequences in cluster 1 in both comparisons. Jalview2.11.3.2 software with the BLOSUM62 substitution matrix was used for the tree diagram. The two major subgroups identified in the tree are shown in color along with the CDR3b sequences that fall outside them.
+
+# INTERACTIVE DATABASE
+
+In order to offer an ordered and detailed information of the main results of our study for public use, we have generated a database consisting of a set of interactive tables in which researchers can filter and sort their content. In this section, authors could obtain relevant information for their studies from the quick and easy contrast with our results.
+
+**An example case** would be the query of COVID-19 reactive CDR3 sequences with high predictive capacity in our cohort.
+
+## Standarized LCM-BIC variables
+
+For information regarding how the data was obtained, how the study variables were calculated, and additional information on the metrics performed, please refer to our [**PDF Supplementary Material**](supplementary_materialsandmethods.pdf).
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(DT)
+library(dplyr)
+
+
+selected_df3_updated <- read.delim("int_scripts/web_lcm_var.csv", sep = ';')
+
+
+selected_df3_updated <- selected_df3_updated |>
+  mutate(across(where(is.numeric), ~ round(.x, 5)))
+
+
+colnames(selected_df3_updated) <- gsub("\\.", " ", colnames(selected_df3_updated))
+
+
+datatable(
+  selected_df3_updated,
+  filter = "top",
+  extensions = c('Buttons', 'FixedHeader', 'FixedColumns'),
+  options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    pageLength = 10,
+    lengthMenu = list(c(10, 25, 50, -1), c('10', '25', '50', 'All')),
+    scrollX = TRUE,
+    fixedHeader = TRUE,
+    fixedColumns = list(leftColumns = 2),
+    autoWidth = TRUE
+  ),
+  rownames = FALSE,
+  class = 'stripe hover cell-border order-column'
+)
+
+```
+
+## Antigen affinities of Deep-learning predicted sequences
+
+This analysis focuses on the top CDR3 sequences identified as highly predictive (AUC ≥ 0.99) in the supervised DeepTCR models comparing Cluster 1 vs Cluster 2 and Cluster 1 vs Cluster 3. To investigate their potential antigen specificity, these sequences were further analyzed using TCRmatch, a tool from the Immune Epitope Database (IEDB) that predicts TCR specificity based on sequence similarity.
+
+TCRmatch computes a similarity score ranging from 0 (no similarity) to 1 (perfect match) using a k-mer-based algorithm that captures both exact amino acid matches and biochemical motif similarities. This scoring system allows assessment of functional convergence between query CDR3 sequences and known antigen-specific TCRs.
+
+The following table summarizes the key information for each analyzed sequence, including:
+
+1.   **CDR3 amino acid sequence** from our dataset with a validated match in the IEDB.
+
+2.   **Trimmed CDR3β sequence** (removal of first and last residues) used for compatibility with TCRmatch.
+
+3.   **TCRmatch similarity score** indicating the degree of similarity between the query CDR3 and known IEDB CDR3 sequences.
+
+4.   **Amino acid sequence of the matched epitope**, indicating potential antigenic specificity.
+
+5.   **Full and abbreviated names of the source protein** from which the antigen is derived.
+
+6.   **Organism of origin** for the identified antigen.
+
+7.   **Patient cluster** to which the query CDR3 sequence belongs.
+
+8.   **Supervised DeepTCR model** (Cluster 1 vs 2 or Cluster 1 vs 3) where the sequence was originally identified.
+
+This combined approach enables the exploration of possible functional relevance and antigenic targets of key CDR3 sequences identified through machine learning, providing biological context to the computational predictions.
+
+For information regarding the DeepTCR supervised models protocol and the TCRmatch approach, please refer to our [**PDF Supplementary Material**](supplementary_materialsandmethods.pdf).
+
+```{r,  echo=FALSE, warning=FALSE, message=FALSE}
+tcrmatch <- read.delim("int_scripts/tcrmatch.csv", sep = ';')
+
+
+tcrmatch <- tcrmatch |>
+  mutate(across(where(is.numeric), ~ round(.x, 5)))
+
+
+colnames(tcrmatch) <- gsub("\\.", " ", colnames(tcrmatch))
+
+
+datatable(
+  tcrmatch,
+  filter = "top",
+  extensions = c('Buttons', 'FixedHeader', 'FixedColumns'),
+  options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    pageLength = 10,
+    lengthMenu = list(c(10, 25, 100, 500, 1000, 5000,  -1), c('10', '25', '100', '500', '1000', '5000', 'All')),
+    scrollX = TRUE,
+    fixedHeader = TRUE,
+    fixedColumns = list(leftColumns = 2),
+    autoWidth = TRUE
+  ),
+  rownames = FALSE,
+  class = 'stripe hover cell-border order-column'
+)
+```

@@ -1,0 +1,34 @@
+/* Justifica todo el texto */
+body {
+  text-align: justify;
+}
+
+/* Estilo para el título principal (h1) */
+h1.title {
+  color: white;
+  background-color: #D8BFD8; /* morado claro */
+  padding: 20px;
+  text-align: center;
+  border-radius: 0 0 10px 10px;
+}
+
+/* Estilo para el índice flotante (TOC) */
+div#TOC {
+  position: fixed;
+  top: 100px;
+  left: 10px;
+  width: 250px;
+  max-height: 90%;
+  overflow: auto;
+  background-color: #E6CCF2; /* otro tono de morado claro */
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 0.9em;
+  border-radius: 5px;
+  z-index: 9999;
+}
+
+/* Opcional: estilizar los títulos de secciones */
+h2, h3 {
+  color: #4B0082; /* índigo oscuro */
+}
