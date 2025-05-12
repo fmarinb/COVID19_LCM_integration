@@ -7,6 +7,7 @@ output:
     toc: true
     toc_float: true
     number_sections: true
+    theme: cosmo    
     css: estilo.css
 ---
 
@@ -299,7 +300,7 @@ In order to offer an ordered and detailed information of the main results of our
 
 ## Standarized LCM-BIC variables
 
-For information regarding how the data was obtained, how the study variables were calculated, and additional information on the metrics performed, please refer to our [**PDF Supplementary Material**](supplementary_materialsandmethods.pdf).
+For information regarding how the data was obtained, how the study variables were calculated, and additional information on the metrics performed, please refer to our [**PDF Supplementary Material**](Supplementary_material_1_Suppplementary_Methods.pdf).
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(DT)
@@ -362,7 +363,7 @@ The following table summarizes the key information for each analyzed sequence, i
 
 This combined approach enables the exploration of possible functional relevance and antigenic targets of key CDR3 sequences identified through machine learning, providing biological context to the computational predictions.
 
-For information regarding the DeepTCR supervised models protocol and the TCRmatch approach, please refer to our [**PDF Supplementary Material**](supplementary_materialsandmethods.pdf).
+For information regarding the DeepTCR supervised models protocol and the TCRmatch approach, please refer to our [**PDF Supplementary Material**](Supplementary_material_1_Suppplementary_Methods.pdf).
 
 ```{r,  echo=FALSE, warning=FALSE, message=FALSE}
 tcrmatch <- read.delim("int_scripts/tcrmatch.csv", sep = ';')
