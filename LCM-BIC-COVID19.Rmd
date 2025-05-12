@@ -1,5 +1,5 @@
 ---
-title: "LCM-BIC sclustering in COVID-19 patients
+title: "LCM-BIC immunophenotyping clustering in COVID-19 patients
 
 Interactive Results and Databases."
 output:
