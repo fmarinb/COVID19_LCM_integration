@@ -10,4 +10,4 @@ COVID-19 manifests across a spectrum from asymptomatic to fatal outcomes. While 
 
 ## Repertorie data avaliability
 
-Seurat objects containing raw counts, cell annotations, and associated metadata are available through the European Genome-Phenome Archive (EGA) under study accession EGAS50000000888 (https://ega-archive.org/studies/EGAS50000000888). 
+The 173 bulk TCR-beta chain pre-processed files are stored at the European Genome Phenome Archive (EGA) upon formal request (https://ega-archive.org/datasets/EGAD50000000477).
